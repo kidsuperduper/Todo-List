@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = require("./routes/router");
+const errorHandler = require("http-errors");
 require("dotenv").config();
 
 const app = express();
@@ -8,6 +9,17 @@ const app = express();
 app.use(express.static("./public"));
 app.use(express.json());
 app.use("/api/v1/todo", router);
+
+app.use((req, res, next) => {
+  next(errorHandler.NotFound("This route does not exist"));
+});
+
+app.use((err, req, res, next) => {
+  res.json({
+    status: err.status || 500,
+    message: err.message,
+  });
+});
 
 const start = async () => {
   await mongoose

@@ -9,52 +9,49 @@ const id = new URLSearchParams(params).get("id");
 let tempName;
 
 const showTask = async () => {
-  try {
-    const {
-      data: { todo },
-    } = await axios.get(`/api/v1/todo/${id}`);
-    const { _id: todoID, name } = todo;
+    try {
+        const res = await axios.get(`/api/v1/todo/${id}`);
 
-    taskIDDOM.textContent = todoID;
-    taskNameDOM.value = name;
-    tempName = name;
-  } catch (error) {
-    console.log(error);
-  }
+        const { _id: todoID, name } = res.data;
+
+        taskIDDOM.textContent = todoID;
+        taskNameDOM.value = name;
+        tempName = name;
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 showTask();
 
 editFormDOM.addEventListener("submit", async (e) => {
-  editBtnDOM.textContent = "Loading...";
-  e.preventDefault();
-  try {
-    const taskName = taskNameDOM.value;
+    editBtnDOM.textContent = "Loading...";
+    e.preventDefault();
+    try {
+        const taskName = taskNameDOM.value;
 
-    const {
-      data: { todo },
-    } = await axios.patch(`/api/v1/todo/${id}`, {
-      name: taskName,
-    });
+        const res = await axios.patch(`/api/v1/todo/${id}`, {
+            name: taskName,
+        });
 
-    const { _id: todoID, name } = todo;
+        const { _id: todoID, name } = res.data;
 
-    taskIDDOM.textContent = todoID;
-    taskNameDOM.value = name;
-    tempName = name;
+        taskIDDOM.textContent = todoID;
+        taskNameDOM.value = name;
+        tempName = name;
 
-    formAlertDOM.style.display = "block";
-    formAlertDOM.textContent = `success, edited task`;
-    formAlertDOM.classList.add("text-success");
-  } catch (error) {
-    console.error(error);
-    taskNameDOM.value = tempName;
-    formAlertDOM.style.display = "block";
-    formAlertDOM.innerHTML = `error, please try again`;
-  }
-  editBtnDOM.textContent = "Edit";
-  setTimeout(() => {
-    formAlertDOM.style.display = "none";
-    formAlertDOM.classList.remove("text-success");
-  }, 3000);
+        formAlertDOM.style.display = "block";
+        formAlertDOM.textContent = `success, edited task`;
+        formAlertDOM.classList.add("text-success");
+    } catch (error) {
+        console.error(error);
+        taskNameDOM.value = tempName;
+        formAlertDOM.style.display = "block";
+        formAlertDOM.innerHTML = `error, please try again`;
+    }
+    editBtnDOM.textContent = "Edit";
+    setTimeout(() => {
+        formAlertDOM.style.display = "none";
+        formAlertDOM.classList.remove("text-success");
+    }, 3000);
 });
